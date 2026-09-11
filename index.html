@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Obsidianで開く</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    background: #1e1f22; color: #e3e5e8;
+  }
+  main { text-align: center; padding: 2rem 1.5rem; max-width: 34rem; }
+  h1 { font-size: 1.3rem; margin: 0 0 .75rem; }
+  #target { color: #949ba4; word-break: break-all; margin: 0 0 1.25rem; }
+  .btn {
+    display: inline-block; padding: .9rem 2.2rem; border-radius: .6rem;
+    background: #7c5cd6; color: #fff; text-decoration: none; font-size: 1.05rem; font-weight: 600;
+  }
+  .hint { color: #949ba4; font-size: .85rem; line-height: 1.7; margin-top: 1.25rem; }
+  code { display: block; margin-top: .5rem; padding: .6rem; border-radius: .4rem;
+         background: #111214; color: #b5bac1; font-size: .75rem; word-break: break-all; user-select: all; }
+  @media (prefers-color-scheme: light) {
+    body { background: #f5f5f7; color: #1d1d1f; }
+    #target, .hint { color: #6e6e73; }
+    code { background: #e8e8ed; color: #3a3a3c; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>📓 Obsidianで開く</h1>
+  <p id="target"></p>
+  <a id="open" class="btn" href="#">Obsidianで開く</a>
+  <p class="hint">自動で開かない場合は上のボタンをタップ。<br>それでも開かない場合は下のURIをコピーしてブラウザのアドレス欄へ。</p>
+  <code id="uri"></code>
+</main>
+<script>
+  // 静的ページのみ。何も収集・送信しない。obsidian:// への中継だけを行う。
+  // Discord は http/https しかリンク化しないため、この https ページを経由してワンタップで Obsidian を開く。
+  const p = new URLSearchParams(location.search);
+  const v = p.get("v") || "";
+  const f = p.get("f") || "";
+  const uri = "obsidian://open?vault=" + encodeURIComponent(v) + "&file=" + encodeURIComponent(f);
+  document.getElementById("open").href = uri;
+  document.getElementById("uri").textContent = uri;
+  if (v && f) {   // v と f の両方が要る（既定の vault 名は持たない）
+    document.getElementById("target").textContent = "📄 " + f;
+    location.href = uri;   // 自動試行（アプリ内ブラウザ等でブロックされてもボタンが残る）
+  }
+</script>
+</body>
+</html>
